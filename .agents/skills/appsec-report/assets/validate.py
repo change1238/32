@@ -49,8 +49,8 @@ def main():
             if not i.get(k, '').strip():
                 errs.append(f"{i['测试编号']} 的 {k} 为空")
 
-    # 模板仅两级: 高 / 中 (无 严重 / 低)
-    VALID_LEVELS = {'高危', '中危', '高', '中'}
+    # 按事实依据三级定级: 高 / 中 / 低
+    VALID_LEVELS = {'高危', '中危', '低危', '高', '中', '低'}
     for idv, f in findings.items():
         res = f.get('测试结果', '')
         if res not in VALID_RESULTS:

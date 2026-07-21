@@ -46,12 +46,13 @@ CATEGORIES = [
 ]
 RESULT_COLOR = {'不符合': RGBColor(0xC0, 0x00, 0x00), '符合': RGBColor(0x00, 0x80, 0x00),
                 '未测试': RGBColor(0xBF, 0x8F, 0x00), '不涉及': RGBColor(0x59, 0x59, 0x59)}
-# 模板定级只有「高 / 中」两级：无「严重」「低」。严重->高, 低->中。
-LEVEL_COLOR = {'高': RGBColor(0xE3, 0x6C, 0x09), '中': RGBColor(0xBF, 0x8F, 0x00)}
-# 详表/汇总按模板以单字展示风险等级(仅 高/中)
+# 按事实依据三级定级：高 / 中 / 低（严重->高）
+LEVEL_COLOR = {'高': RGBColor(0xC0, 0x00, 0x00), '中': RGBColor(0xE3, 0x6C, 0x09),
+               '低': RGBColor(0xBF, 0x8F, 0x00)}
+# 详表/汇总按模板以单字展示风险等级(高/中/低)
 LEVEL_SHORT = {'严重': '高', '高危': '高', '高': '高',
-               '中危': '中', '中': '中', '低危': '中', '低': '中'}
-# 统计口径(归一到 高危/中危)
+               '中危': '中', '中': '中', '低危': '低', '低': '低'}
+# 统计口径(归一到 高危/中危/低危)
 LEVEL_FULL = {'严重': '高危', '高': '高危', '高危': '高危', '中': '中危', '中危': '中危',
               '低': '低危', '低危': '低危'}
 
@@ -90,6 +91,7 @@ def build(items_meta, findings, meta, evidence_dir, out_path):
     n_fail = result_counts['不符合']; n_ok = result_counts['符合']
     n_ut = result_counts['未测试']; n_na = result_counts['不涉及']
     high = fail_levels.get('高危', 0); mid = fail_levels.get('中危', 0)
+    low = fail_levels.get('低危', 0)
 
     # 章节号 3.<类序>.<类内序>
     chapter = {}; cat_seen = []; cat_idx = {}
@@ -227,7 +229,7 @@ def build(items_meta, findings, meta, evidence_dir, out_path):
 
     h2('风险信息')
     para(f'本次安全检测共完成 {n} 项检测内容，共计发现 {n_fail} 个安全风险，其中高危风险 {high} 个、'
-         f'中危风险 {mid} 个（判定为“不符合”）。'
+         f'中危风险 {mid} 个、低危风险 {low} 个（判定为“不符合”）。'
          f'另有“符合” {n_ok} 项、“未测试” {n_ut} 项、“不涉及” {n_na} 项。')
     para(f'“未测试” {n_ut} 项系因测试条件受限（如缺少对照账号、生产环境非破坏性约束、经隧道无法验证等）'
          f'无法完成验证，据实标记并说明原因；“不涉及” {n_na} 项系统不涉及对应功能场景。')
