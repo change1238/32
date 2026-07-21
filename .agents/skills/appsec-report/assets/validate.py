@@ -58,11 +58,12 @@ def main():
         if res != '不涉及':
             if not f.get('截图说明', '').strip():
                 errs.append(f'{idv} 截图说明为空')
+        # 模板要求每项风险等级均须填写(为该测试项的固有风险等级), 不得为空
+        if f.get('风险等级', '').strip() not in VALID_LEVELS:
+            errs.append(f'{idv} 风险等级缺失/非法(每项必须填写): {f.get("风险等级")!r}')
         if res == '不符合':
             if not f.get('修复建议', '').strip():
                 errs.append(f'{idv} 判定不符合但修复建议为空')
-            if f.get('风险等级', '').strip() not in VALID_LEVELS:
-                errs.append(f'{idv} 判定不符合但风险等级缺失/非法: {f.get("风险等级")!r}')
 
     blob = json.dumps([findings, meta], ensure_ascii=False)
     for pat, desc in SENSITIVE:
